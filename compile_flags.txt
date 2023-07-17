@@ -1,0 +1,5 @@
+-Wall
+-g
+-Isrc/lexer
+-Isrc/ast
+-Isrc/parser
