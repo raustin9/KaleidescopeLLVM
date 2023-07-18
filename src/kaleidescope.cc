@@ -1,4 +1,5 @@
 #include <iostream>
+#include <llvm/Support/raw_ostream.h>
 #include "lexer.hpp"
 #include "ast.hpp"
 #include "parser.hpp"
@@ -11,10 +12,14 @@ main(void)
   BinopPrecedence['-'] = 20;
   BinopPrecedence['*'] = 40;
 
-  fprintf(stderr, "ready... ");
+  fprintf(stderr, "ready >> ");
   getNextToken();
 
+  InitializeModule();
+
   MainLoop();
+
+  TheModule->print(llvm::errs(), nullptr);
 
   return 0;
 }

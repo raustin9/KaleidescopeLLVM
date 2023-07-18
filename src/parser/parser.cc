@@ -227,12 +227,28 @@ std::unique_ptr<ast::FunctionAST> ParseTopLevelExpr()
   return nullptr;
 }
 
+// Top level parsing and JIT Driver
+void
+InitializeModule()
+{
+  TheContext = std::make_unique<llvm::LLVMContext>();
+  TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+
+  // Create new builder for the module
+  Builder = std::make_unique<llvm::IRBuilder<> >(*TheContext);
+}
+
 void
 HandleDefinition()
 {
-  if (ParseDefinition())
+  if (auto FnAST = ParseDefinition())
   {
-    fprintf(stderr, "Parsed a function definition\n");
+    if (auto *FnIR = FnAST->codegen())
+    {
+      fprintf(stderr, "Read function definition:");
+      FnIR->print(llvm::errs());
+      fprintf(stderr, "\n");
+    }
   }
   else
   {
@@ -244,9 +260,14 @@ HandleDefinition()
 void
 HandleExtern()
 {
-  if (ParseExtern())
+  if (auto ProtoAST = ParseExtern())
   {
-    fprintf(stderr, "Parsed an extern\n");
+    if (auto *FnIR = ProtoAST->codegen())
+    {
+      fprintf(stderr, "Read extern: ");
+      FnIR->print(llvm::errs());
+      fprintf(stderr, "\n");
+    }
   }
   else
   {
@@ -258,9 +279,17 @@ HandleExtern()
 void
 HandleTopLevelExpression()
 {
-  if (ParseTopLevelExpr())
+  if (auto FnAST = ParseTopLevelExpr())
   {
-    fprintf(stderr, "Parsed a top-level expr\n");
+    if (auto *FnIR = FnAST->codegen())
+    {
+      fprintf(stderr, "Read top level expression: ");
+      FnIR->print(llvm::errs());
+      fprintf(stderr, "\n");
+
+      // remove the anonymous expression
+      FnIR->eraseFromParent();
+    }
   }
   else
   {

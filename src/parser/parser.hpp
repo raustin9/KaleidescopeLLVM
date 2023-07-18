@@ -48,7 +48,8 @@ extern std::unique_ptr<ast::FunctionAST> ParseDefinition();
 extern std::unique_ptr<ast::FunctionAST> ParseTopLevelExpr();
 extern std::unique_ptr<ast::PrototypeAST> ParseExtern();
 
-// Top level parsing
+// Top level parsing and JIT driver
+extern void InitializeModule();
 extern void HandleDefinition();
 extern void HandleExtern();
 extern void HandleTopLevelExpression();

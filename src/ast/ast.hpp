@@ -24,12 +24,11 @@
 #ifndef AST_
 #define AST_
 
-using namespace llvm;
-
 extern std::unique_ptr<llvm::LLVMContext> TheContext;
 extern std::unique_ptr<llvm::Module> TheModule;
 extern std::unique_ptr<llvm::IRBuilder<>> Builder;
 extern std::map <std::string, llvm::Value*> NamedValues;
+extern llvm::Value* LogErrorV();
 
 namespace ast
 {
@@ -37,7 +36,7 @@ namespace ast
   {
     public:
       virtual ~ExprAST() = default;
-//      virtual Value *codegen() = 0;
+      virtual llvm::Value *codegen() = 0;
   };
 
   class NumberExprAST : public ExprAST
@@ -46,7 +45,7 @@ namespace ast
     
     public:
       NumberExprAST(double Val) : Val(Val) {}
-//      Value *codegen() override;
+      llvm::Value *codegen() override;
   };
 
   class VariableExprAST : public ExprAST 
@@ -55,6 +54,7 @@ namespace ast
 
     public:
       VariableExprAST(const std::string &Name) : Name(Name) {}
+      llvm::Value *codegen() override;
   };
 
   class BinaryExprAST : public ExprAST 
@@ -68,6 +68,7 @@ namespace ast
         std::unique_ptr<ExprAST> LHS,
         std::unique_ptr<ExprAST> RHS
       ) : Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+      llvm::Value *codegen() override;
   };
 
   class CallExprAST : public ExprAST
@@ -80,6 +81,7 @@ namespace ast
         const std::string &Callee,
         std::vector<std::unique_ptr<ExprAST> > Args
       ) : Callee(Callee), Args(std::move(Args)) {}
+      llvm::Value *codegen() override;
   };
 
   // PrototypeAST
@@ -97,6 +99,7 @@ namespace ast
       ) : Name(Name), Args(std::move(Args)) {}
 
       const std::string &getName() const { return Name; }
+      llvm::Function *codegen();
   };
 
   class FunctionAST
@@ -109,6 +112,7 @@ namespace ast
         std::unique_ptr<PrototypeAST> Proto,
         std::unique_ptr<ExprAST> Body
       ) : Proto(std::move(Proto)), Body(std::move(Body)) {}
+      llvm::Function *codegen();
   };
 } /* End ast namespace  */
      
