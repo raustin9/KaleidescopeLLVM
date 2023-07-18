@@ -1,11 +1,20 @@
 #include <iostream>
 #include "lexer.hpp"
+#include "ast.hpp"
+#include "parser.hpp"
 
 int
 main(void)
 {
-  std::string input = "This is a test string with 4 3 +";
-  std::cout << IdentifierStr;
+  BinopPrecedence['<'] = 10;
+  BinopPrecedence['+'] = 20;
+  BinopPrecedence['-'] = 20;
+  BinopPrecedence['*'] = 40;
+
+  fprintf(stderr, "ready... ");
+  getNextToken();
+
+  MainLoop();
 
   return 0;
 }

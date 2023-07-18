@@ -3,3 +3,4 @@
 -Isrc/lexer
 -Isrc/ast
 -Isrc/parser
+`llvm-config --cxxflags --ldflags --system-libs --libs core`

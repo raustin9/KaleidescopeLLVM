@@ -1,5 +1,6 @@
-CC=g++
-CFLAGS=-Wall -g -Isrc/lexer -Isrc/ast -Isrc/parser
+CC=clang++
+LLVM=`llvm-config --cxxflags --ldflags --system-libs --libs core`
+CFLAGS=-Wall -g -Isrc/lexer -Isrc/ast -Isrc/parser $(LLVM)
 BIN=bin/
 LEX=lexer.cc
 AST=ast.cc
@@ -27,11 +28,11 @@ lib/parser.a: obj/parser.o
 	ranlib $@
 
 obj/parser.o: src/parser/parser.cc
-	$(CC) $(CFLAGS) -c -o $@ $< 
+	$(CC) $(CFLAGS)  $(LLVM) -c -o $@ $< 
 
 lib/ast.a: obj/ast.o
 	ar ru $@ $<
 	ranlib $@
 
 obj/ast.o: src/ast/ast.cc
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(LLVM) -c -o $@ $<

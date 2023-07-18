@@ -1,3 +1,16 @@
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
+
+#include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -11,12 +24,20 @@
 #ifndef AST_
 #define AST_
 
+using namespace llvm;
+
+extern std::unique_ptr<llvm::LLVMContext> TheContext;
+extern std::unique_ptr<llvm::Module> TheModule;
+extern std::unique_ptr<llvm::IRBuilder<>> Builder;
+extern std::map <std::string, llvm::Value*> NamedValues;
+
 namespace ast
 {
   class ExprAST
   {
     public:
       virtual ~ExprAST() = default;
+//      virtual Value *codegen() = 0;
   };
 
   class NumberExprAST : public ExprAST
@@ -25,6 +46,7 @@ namespace ast
     
     public:
       NumberExprAST(double Val) : Val(Val) {}
+//      Value *codegen() override;
   };
 
   class VariableExprAST : public ExprAST 
